@@ -1,39 +1,29 @@
 @echo off
+title Windows Proxy Manager
 :menu
 cls
 echo Windows Proxy Manager
-echo ---------------------
+echo --------------
 echo 1. Set Proxy
 echo 2. Remove Proxy
-echo.
+choice /c 12 /n /m "Enter your choice (1 or 2): "
 
-choice /C 12 /N /M "Select option (1-2): "
+if errorlevel 2 goto remove
+if errorlevel 1 goto set
 
-if errorlevel 2 goto removeproxy
-if errorlevel 1 goto setproxy
+:set
+set /p proxy=Enter proxy (ip:port): 
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d %proxy% /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f >nul
+echo Proxy set successfully.
+goto end
 
-:setproxy
-echo.
-set /p proxystring="Enter proxy address (format - ip:port): "
+:remove
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /f >nul 2>&1
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f >nul
+echo Proxy removed successfully.
+goto end
 
-for /f "tokens=1,2 delims=:" %%a in ("%proxystring%") do (
-    set proxyip=%%a
-    set proxyport=%%b
-)
-
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "%proxystring%" /f
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f
-
-echo.
-echo Proxy has been set to %proxystring%
-timeout /t 3
-goto menu
-
-:removeproxy
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /f
-
-echo.
-echo Proxy settings have been removed
-timeout /t 3
+:end
+timeout /t 5
 goto menu
