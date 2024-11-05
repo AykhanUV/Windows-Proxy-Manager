@@ -6,3 +6,4 @@ This is a batch file for managing porxy. With this program, you can set/apply or
 - After that, you can input your proxy the format is IP:PORT.
 ## Note
 - As you see above proxy format is IP:PORT
+- You can use proxy scraper tool [here](https://github.com/monosans/proxy-scraper-checker) or get a list that is updated hourly [here](https://github.com/monosans/proxy-list)
